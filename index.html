@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="헬스 입문자를 위한 가상 쇼핑몰. 스타터 키트를 고르고, 미니게임으로 운동 순서를 익혀요.">
+<meta name="description" content="헬스 입문자를 위한 가상 쇼핑몰. 필요한 용품을 고르고, 미니게임으로 운동 순서를 익혀요.">
 <title>헬린이 탈출 쇼핑몰</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,6 +66,12 @@ header{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:
 .exit h1{font:400 clamp(46px,15vw,92px)/1 var(--display);margin:6px 0 12px;letter-spacing:-.02em}
 .exit p{margin:0;font-weight:500;max-width:32ch}
 .exit .arrow{position:absolute;right:20px;top:14px;font:400 40px/1 var(--display)}
+.cta.big .btn{min-height:56px;font-size:18px;padding:0 26px}
+.feats{display:grid;gap:12px;margin:22px 0 8px}
+@media(min-width:720px){.feats{grid-template-columns:repeat(3,1fr)}}
+.feat{display:flex;flex-direction:column;gap:4px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:18px;text-decoration:none;color:inherit}
+.feat:hover,.feat:focus-visible{border-color:var(--sign)}
+.feat .fi{font-size:34px;line-height:1.1}.feat b{font-size:19px}.feat span:last-child{color:var(--mute);font-size:14px}
 .steps{display:grid;gap:10px;margin:20px 0 0;padding:0;list-style:none;counter-reset:s}
 @media(min-width:640px){.steps{grid-template-columns:repeat(3,1fr)}}
 .steps li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;counter-increment:s}
@@ -183,6 +189,12 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .s-ghost{fill:none;stroke:#fff;stroke-width:2.5;stroke-dasharray:6 5;opacity:.9}
 dl.terms dt{font-weight:700;margin-top:14px}
 dl.terms dd{margin:2px 0 0;color:var(--mute)}
+.tipg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:12px}
+.tipc{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.tipc h3{margin:0 0 4px;font-size:17px}.tipc .tsub{display:block;color:var(--mute);font-size:13px;margin-bottom:6px}
+.tipc ul{margin:0;padding-left:18px}.tipc li{margin:4px 0}
+.tipc .warn{margin-top:8px;font-size:13px;color:var(--mute)}
+.tipc a{color:var(--ink);font-weight:700}
 .crow{display:grid;grid-template-columns:1.3fr 1fr .8fr 1fr;gap:6px;margin:6px 0}
 .crow.h{font-size:12px;color:var(--mute);font-weight:700}
 .crow input{padding:9px 8px;font-size:14px}
@@ -541,6 +553,12 @@ img.av{display:block;border-radius:inherit}
   </div>
 </header>
 <main id="view"></main>
+<section class="wrap promo" id="promo" aria-label="홍보 영상" style="margin-top:32px">
+<h2>홍보 영상</h2>
+<p>헬린이 탈출 쇼핑몰을 20초로 소개해요.</p>
+<video controls preload="metadata" playsinline src="promo.mp4" style="width:100%;max-width:880px;border-radius:12px;background:#000;display:block"></video>
+<p style="margin-top:8px"><a href="promo.mp4" target="_blank" rel="noopener">영상 따로 열기</a></p>
+</section>
 <footer class="wrap note">가상 프로젝트입니다. 주문과 결제는 모두 모의이고 실제 판매·배송은 없어요. “실제 제품” 표시가 있는 상품은 실제 국내 브랜드 제품을 참고용으로 보여주며 해당 브랜드와 관계가 없어요. 그 밖의 상품과 브랜드, 화면, 문구 일부는 AI가 만든 가상 샘플이에요.</footer>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="lvup" hidden></div>
@@ -556,9 +574,6 @@ var FREE=30000, SHIPFEE=3000;
 
 /* ---------- 상품 데이터 (모두 가상) ---------- */
 var P=[
- {id:'kit',name:'헬린이 스타터 키트',cat:'세트',price:24900,was:29700,tag:'입문 추천',
-  desc:'처음 헬스장에 갈 때 필요한 세 가지를 한 번에 담았어요. 따로 사는 것보다 4,800원 저렴해요.',
-  inc:['쉐이커 600ml 1개','리프팅 스트랩 1쌍','운동 장갑 1쌍 (M)']},
  {id:'whey',name:'웨이 프로틴 1kg 초코맛',cat:'프로틴',price:39900,
   desc:'1회 30g 기준 33회분이에요. 입문 가이드의 비교 계산기에서 단백질 1g당 가격을 다른 제품과 견줄 수 있어요.',
   inc:['내용량 1kg','1회 제공량 30g (33회분)','1회 단백질 24g (라벨 기준)']},
@@ -640,7 +655,6 @@ var ART={
  glove:'<rect x="26" y="44" width="48" height="38" rx="10" class="a-ink"/><rect x="26" y="28" width="10" height="26" rx="5" class="a-ink"/><rect x="38" y="20" width="10" height="34" rx="5" class="a-ink"/><rect x="50" y="18" width="10" height="36" rx="5" class="a-ink"/><rect x="62" y="24" width="10" height="30" rx="5" class="a-ink"/><rect x="13" y="54" width="24" height="11" rx="5.5" transform="rotate(-30 25 60)" class="a-ink"/><rect x="36" y="54" width="30" height="14" rx="4" class="a-sign"/><rect x="26" y="78" width="48" height="12" rx="3" class="a-hot"/>',
  mat:'<circle cx="50" cy="50" r="32" class="a-sign"/><circle cx="50" cy="50" r="32" class="a-out"/><circle cx="50" cy="50" r="23" class="a-ring"/><circle cx="50" cy="50" r="15" class="a-ring"/><circle cx="50" cy="50" r="7" class="a-ring"/>'
 };
-ART.kit='<g transform="translate(-6 8) scale(.62)">'+ART.shaker+'</g><g transform="translate(46 4) scale(.62)">'+ART.glove+'</g><g transform="translate(18 44) scale(.6)">'+ART.strap+'</g>';
 ART.bottle='<rect x="30" y="34" width="40" height="54" rx="8" class="a-ink"/><rect x="34" y="22" width="32" height="14" rx="4" class="a-hot"/><rect x="30" y="50" width="40" height="22" class="a-sign"/><circle cx="50" cy="61" r="5" class="a-paper"/>';
 ART.jar='<rect x="24" y="38" width="52" height="50" rx="10" class="a-ink"/><rect x="28" y="26" width="44" height="14" rx="5" class="a-hot"/><rect x="24" y="54" width="52" height="20" class="a-sign"/><rect x="34" y="61" width="32" height="3" rx="1.5" class="a-paper"/>';
 var svg=function(k){return '<svg viewBox="0 0 100 100" aria-hidden="true">'+ART[k]+'</svg>'};
@@ -696,25 +710,25 @@ function cheapest(cat){
   return b;
 }
 function viewHome(){
-  var top=['kit','whey','shaker'].map(find);
+  var top=['ns-protein','jb-creatine','sd-eaa'].map(find);
   var cs=['프로틴','아르기닌','크레아틴'].map(function(c){
     var b=cheapest(c);
     return '<a class="card pc" href="#prices" data-act="goc" data-v="'+c+'"><div class="tile">'+pic(b.x)+'</div>'+
       '<div class="meta"><span class="cat">'+c+' 1g당 최저가</span><span class="nm">'+b.x.name+'</span><span class="price">'+Math.round(b.u)+'원</span></div></a>';
   }).join('');
-  return '<section class="hero wrap"><div class="exit"><span class="arrow" aria-hidden="true">&#8599;</span><small>다음 출구</small><h1>헬린이 탈출</h1><p>헬스장 가기 전에 필요한 것만 담고, 보충제 가격은 성분 1g당으로 한눈에 비교해요.</p></div>'+
-    '<div class="cta"><a class="btn hot" href="#prices">가격 비교 보기</a><a class="btn line" href="#item-kit">스타터 키트</a><a class="btn line" href="#guide">입문 가이드</a></div>'+
-    careerTeaser()+
-    '<ol class="steps"><li><b>가격 비교하기</b><span>프로틴, 아르기닌, 크레아틴을 성분 1g당으로</span></li>'+
-    '<li><b>필요한 것만 담기</b><span>스타터 키트로 기본 용품을 한 번에</span></li>'+
-    '<li><b>게임으로 익히기</b><span>렛풀다운, 벤치프레스, 스쿼트의 순서와 리듬</span></li></ol>'+
+  var feats=[['🎮','게임으로 운동 배우기','벤치프레스·스쿼트·렛풀다운을 직접 플레이하며 익혀요','#guide','guide'],
+    ['💰','보충제 최저가 비교','프로틴·크레아틴·아르기닌을 성분 1g당 가격으로 비교해요','#prices','prices'],
+    ['💪','내 캐릭터 키우기','운동할수록 레벨이 오르고 캐릭터가 근육질로 변해요','#career','career']];
+  return '<section class="hero wrap"><div class="exit"><span class="arrow" aria-hidden="true">&#8599;</span><small>다음 출구</small><h1>헬린이 탈출</h1><p>게임으로 운동을 배우고, 보충제는 가장 싸게 사요.</p></div>'+
+    '<div class="cta big"><a class="btn hot" href="#guide">게임으로 운동 배우기</a><a class="btn line" href="#prices">최저가 비교하기</a></div>'+
+    '<div class="feats">'+feats.map(function(f,i){return '<a class="feat" href="'+f[3]+'"><span class="fi" aria-hidden="true">'+f[0]+'</span><b>'+f[1]+'</b><span>'+f[2]+'</span></a>'}).join('')+'</div>'+
     '<div class="head"><h2>성분 1g당 최저가</h2><a href="#prices">전체 순위 보기</a></div>'+
     '<div class="stack">'+cs+'</div>'+
     '<div class="head"><h2>인기 상품</h2><a href="#shop">전체 보기</a></div>'+
     '<div class="grid">'+top.map(card).join('')+'</div></section>';
 }
 function viewShop(){
-  var cats=['전체','프로틴','닭가슴살','크레아틴','아르기닌','EAA','세트','용품'];
+  var cats=['전체','프로틴','닭가슴살','크레아틴','아르기닌','EAA','용품'];
   var list=P.filter(function(p){return filter==='전체'||p.cat===filter});
   return '<div class="wrap pad"><h1 class="pt">쇼핑</h1>'+
     '<div class="chips" role="group" aria-label="분류">'+cats.map(function(c){
@@ -1978,7 +1992,7 @@ function viewBody(){
     '<div class="head"><h2>장비 상점</h2></div><ul class="eqs">'+EQUIP.map(function(e){
       var own=L.own[e.id],lock=e.req&&!L.own[e.req];
       return '<li class="'+(own?'own':'')+'"><div><b>'+e.n+'</b><small>'+e.d+'</small></div>'+
-        (own?'<span class="tg">보유 중</span>':'<button class="btn '+(lock?'line':'hot')+' sm" data-act="lbuy" data-k="'+e.id+'"'+(lock?' disabled':'')+'>'+(lock?'앞 단계 먼저':e.price+' 코인')+'</button>')+'</li>';
+        (own?'<span class="tsub">보유 중</span>':'<button class="btn '+(lock?'line':'hot')+' sm" data-act="lbuy" data-k="'+e.id+'"'+(lock?' disabled':'')+'>'+(lock?'앞 단계 먼저':e.price+' 코인')+'</button>')+'</li>';
     }).join('')+'</ul><p class="note">산 장비는 캐릭터가 바로 착용해요. '+(p?'<a href="#career-edit">프로필·의상 수정</a>에서 벗을 수 있어요.':'')+'</p>'+
     '<div class="head"><h2>보급품</h2></div><ul class="eqs sup">'+SUPPLY.map(function(s){
       var it=find(s.id);
@@ -2012,9 +2026,46 @@ function viewCompare(){
     '<div class="crow h"><span>제품명</span><span>가격(원)</span><span>서빙 수</span><span>서빙당 단백질(g)</span></div>'+rows+
     '<ul id="lo">'+cmpList()+'</ul><p class="note">첫 줄은 이 쇼핑몰의 웨이 프로틴 기준이에요. 성분 기준은 식약처 등 공식 자료로 확인해야 해요.</p>';
 }
+var TIPS2=[
+ ['워밍업','운동 전 5~10분','🔥',['가볍게 걷기나 사이클로 5~10분 몸에 열을 먼저 올려요.','팔 돌리기, 다리 흔들기 같은 움직이는 스트레칭을 운동 전에 해요. 오래 버티는 스트레칭은 운동 뒤가 좋아요.','본 운동 전에 빈 바나 아주 가벼운 무게로 1~2세트 자세를 먼저 연습해요.','처음 하는 날은 평소보다 가볍게 시작해서 몸 상태를 확인해요.']],
+ ['가슴 운동','벤치프레스 · 체스트프레스 · 푸시업','💪',['어깨뼈를 모아 벤치에 고정하고 가슴을 펴요.','바는 가슴 가운데로 내리고, 팔꿈치는 몸통에서 너무 벌리지 않아요.','손목이 꺾이지 않게 바가 손바닥 아래에 오도록 잡아요.','처음에는 머신 체스트프레스나 가벼운 덤벨로 시작하고, 바벨은 옆에서 봐 주는 사람과 해요.']],
+ ['등 운동','렛풀다운 · 시티드 로우 · 데드리프트','🧗',['팔로 당기지 말고 팔꿈치를 아래·뒤로 보낸다고 생각해요.','렛풀다운은 가슴을 펴고 어깨를 내린 채 바를 가슴 위쪽으로 당겨요.','몸을 뒤로 젖혀 반동으로 당기지 않아요.','데드리프트는 허리를 곧게 유지해야 해서, 처음에는 아주 가벼운 무게로 자세부터 점검해요.']],
+ ['하체 운동','스쿼트 · 레그프레스 · 런지','🦵',['스쿼트는 발을 어깨너비로 벌리고 엉덩이를 뒤로 빼듯이 앉아요.','무릎은 발끝과 같은 방향을 보고, 안쪽으로 모이지 않게 해요.','발바닥 전체로 바닥을 밀고 허리는 곧게 유지해요.','레그프레스는 엉덩이가 시트에서 뜨지 않는 범위까지만 내려요. 올릴 때 무릎을 끝까지 잠그지 않아요.']],
+ ['어깨 운동','숄더프레스 · 사이드 레터럴 레이즈','🏔️',['어깨는 작은 근육이라 무게 욕심을 내지 않아요.','숄더프레스는 허리를 과하게 꺾지 않고 배에 힘을 줘요.','사이드 레이즈는 팔꿈치를 살짝 굽히고 어깨 높이까지만 올려요. 반동은 쓰지 않아요.','가슴과 등 운동에도 어깨가 쓰이니 같은 날 볼륨을 조절해요.']],
+ ['유산소','걷기 · 사이클 · 런닝머신','🏃',['처음에는 옆 사람과 말할 수 있는 정도의 강도로 20~30분부터 시작해요.','주 2~3회부터 시작해서 몸이 적응하면 시간을 늘려요.','런닝머신은 안전 클립을 옷에 끼우고, 손잡이에 기대지 않아요.','경사를 주고 걷는 인클라인 걷기는 달리기보다 무릎 부담이 적어요.']],
+ ['머신 사용 팁','처음 쓰는 기구는 이렇게','⚙️',['기구에 붙은 사용법 그림을 먼저 읽어요.','시트 높이, 패드, 손잡이 위치를 먼저 맞추고 무게를 정해요.','가벼운 핀 위치에서 시작해서 천천히 올려요.','밀거나 당길 때는 힘 있게, 돌아올 때는 천천히 버텨요. 입문 가이드 게임의 리듬과 같아요.','모르는 기구는 직원이나 트레이너에게 물어보는 게 가장 빨라요.']],
+ ['헬스 매너','같이 쓰는 공간이에요','🤝',['쓴 기구는 땀을 닦고, 덤벨·원판·핀은 제자리에 둬요.','세트 사이에 휴대폰을 오래 보며 기구를 차지하지 않아요. 기다리는 사람이 있으면 "몇 세트 남았어요?"라고 물어보고 양보해요.','통로나 거울 앞을 막지 않고, 기구를 쿵 내려놓거나 큰 소리를 내지 않아요.','다른 사람을 촬영하지 않고, 조언은 먼저 물어봤을 때만 해요.','운동화와 깨끗한 운동복을 입고, 향이 강한 향수는 피해요.']]
+];
+var TUBE=[
+ ['짐종국 GYM JONG KOOK','강도 높은 트레이닝과 운동 철학을 보여주는 대표적인 헬스 채널'],
+ ['핏블리 FITVELY','국제 자격증을 가진 트레이너가 예능 요소를 섞어 운동을 알려줘요'],
+ ['피지컬갤러리','체형 교정, 재활, 운동 방법을 쉽게 풀어줘요. 부상 예방과 회복 팁도 있어요'],
+ ['다이어트 과학자 최겸','논문과 데이터를 바탕으로 다이어트 정보를 알려줘요'],
+ ['힙으뜸','스쿼트 챌린지로 알려진 하체·홈트 채널'],
+ ['한혜진 Han Hye Jin','헬스장 왕초보를 위한 전신 루틴 영상이 있어요'],
+ ['황철순','운동 영상을 직접 보고 나에게 맞는지 확인해 보세요'],
+ ['우형재','운동 영상을 직접 보고 나에게 맞는지 확인해 보세요'],
+ ['킹유진','운동 영상을 직접 보고 나에게 맞는지 확인해 보세요'],
+ ['총총','운동 영상을 직접 보고 나에게 맞는지 확인해 보세요'],
+ ['고독한 김승현','운동 영상을 직접 보고 나에게 맞는지 확인해 보세요']
+];
+function viewTips(){
+  return '<h2>부위별 운동 팁</h2><p>처음 헬스장에 갔을 때 바로 써먹을 수 있게 핵심만 모았어요.</p>'+
+    '<div class="tipg">'+TIPS2.map(function(t){
+      return '<section class="tipc"><h3>'+t[2]+' '+esc(t[0])+'</h3><span class="tsub">'+esc(t[1])+'</span><ul>'+t[3].map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></section>';
+    }).join('')+'</div>'+
+    '<p class="note" style="margin-top:14px">일반적인 입문자용 정보예요. 통증이 있거나 지병이 있으면 운동을 멈추고 의사나 전문 트레이너와 상담해요.</p>';
+}
+function viewTube(){
+  return '<h2>참고하면 좋은 유튜버</h2><p>운동 동작은 영상으로 보면 훨씬 빨리 익혀요. 아래 채널은 헬스 입문자가 많이 찾는 곳이에요. 유튜브에서 채널 이름으로 검색해 보세요.</p>'+
+    '<div class="tipg">'+TUBE.map(function(t){
+      return '<section class="tipc"><h3>'+esc(t[0])+'</h3><p style="margin:4px 0 8px">'+esc(t[1])+'</p><a href="https://www.youtube.com/results?search_query='+encodeURIComponent(t[0])+'" target="_blank" rel="noopener">유튜브에서 검색 &#8599;</a></section>';
+    }).join('')+'</div>'+
+    '<p class="note" style="margin-top:14px">채널 소개는 참고용이고, 이 쇼핑몰과 관계가 없어요. 영상 속 운동은 내 몸 상태와 수준에 맞게 따라 해요.</p>';
+}
 function viewGuide(){
-  var tabs=[['play','실전 운동'],['terms','헬스 용어'],['compare','직접 계산']];
-  var body=gtab==='terms'?viewTerms():gtab==='compare'?viewCompare():viewPlay();
+  var tabs=[['play','실전 운동'],['tips','운동 팁'],['tube','참고 유튜버'],['terms','헬스 용어'],['compare','직접 계산']];
+  var body=gtab==='terms'?viewTerms():gtab==='compare'?viewCompare():gtab==='tips'?viewTips():gtab==='tube'?viewTube():viewPlay();
   return '<div class="wrap pad"><h1 class="pt">입문 가이드</h1><p style="margin:0 0 14px">복잡한 운동 용어와 기구 사용법은 게임으로 먼저 익혀요.</p>'+
     '<div class="seg" role="tablist" aria-label="가이드 메뉴">'+tabs.map(function(t){
       return '<button role="tab" aria-selected="'+(t[0]===gtab)+'" class="'+(t[0]===gtab?'on':'')+'" data-act="tab" data-k="'+t[0]+'">'+t[1]+'</button>';
